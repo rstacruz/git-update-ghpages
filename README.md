@@ -4,7 +4,7 @@ Copy the `git-update-ghpages` file to somewhere in your path.
 
 ## Usage
 
-    `git update-ghpages username/repository [options]`
+    git update-ghpages username/repository [options]
 
 ## Options
 
