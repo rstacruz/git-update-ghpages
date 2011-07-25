@@ -28,7 +28,7 @@ http://james.github.com/coffee/manual.
 
     $ git update-ghpages james/coffee -p manual
 
-Update the http://james.github.com itself. GitHub says the branch for
+Update http://james.github.com itself. GitHub says the branch for
 these should be `master` instead of `gh-pages`.
 
     $ git update-ghpages james/james.github.com -b master
