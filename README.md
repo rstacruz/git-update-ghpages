@@ -26,4 +26,9 @@ Same as above, but take the files from 'doc/'.
 Same as the first, but the files will instead be in
 http://james.github.com/coffee/manual.
 
-    $ git update-ghpages james/coffee -i doc -p manual
+    $ git update-ghpages james/coffee -p manual
+
+Update the http://james.github.com itself. GitHub says the branch for
+these should be `master` instead of `gh-pages`.
+
+    $ git update-ghpages james/james.github.com -b master
