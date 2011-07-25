@@ -1,0 +1,118 @@
+#!/usr/bin/env ruby
+# git update-ghpages user/repo -b gh-pages -p manual/ -i
+
+require 'fileutils'
+require 'tmpdir'
+
+module Params
+  def extract(what)   i = index(what) and slice!(i, 2)[1] end;
+  def first_is(what)  shift  if what.include?(self.first); end
+  def self.[](*what)  what.extend Params; end
+  def ===(argv)       argv.first_is(self); end
+end
+
+# Copy files from source folder to another
+def copy_files(from, to, options={})
+  exceptions = options[:except] || []
+
+  Dir["#{from}/**/*"].each do |f|
+    next  unless File.file?(f)
+    next  if exceptions.include?(File.basename(f))
+
+    target = File.join(to, f.gsub(from, ''))
+
+    FileUtils.mkdir_p File.dirname(target)
+    FileUtils.cp f, target
+  end
+end
+
+# Deploy to {repo}/{branch} the files from {path} with the prefix {prefix}
+def gitdeploy(path, repo, branch, prefix='')
+  temppath = File.join(Dir.tmpdir, "g-#{Time.now.to_i}")
+  FileUtils.rm_rf temppath
+
+  # Clone the gh-pages branch.
+  system "git clone #{repo} -b #{branch} #{temppath}"
+  return  if $?.to_i > 0
+
+  current_branch = Dir.chdir(temppath) { `git symbolic-ref HEAD`.strip.split('/') }
+
+  if current_branch.last == branch
+    puts "Adding files to #{prefix}/..."
+
+    # Did we get the correct branch? Just add on top of it.
+    copy_files path, File.join(temppath, prefix)
+
+    #system "(git add .; git add -u; git commit -m .) > /dev/null"
+    Dir.chdir(temppath) {
+      system "(git add .; git add -u; git commit -m .)"
+      system "git push origin #{branch}"
+    }
+  else
+    puts "Warning: No #{branch} branch found in repo, creating one."
+
+    # Else, clean it and start over.
+    FileUtils.rm_rf temppath
+    FileUtils.mkdir temppath
+
+    copy_files path, File.join(temppath, prefix)
+
+    Dir.chdir(temppath) {
+      system "(git init . && git add . && git commit -m .) > /dev/null"
+      system "git push #{repo} master:#{branch} --force"
+    }
+  end
+
+  FileUtils.rm_rf temppath
+end
+
+def tip(msg)
+  $stderr.write "#{msg}\n"
+end
+# ============================================================================
+
+
+ARGV.extend Params
+
+branch = ARGV.extract('--branch') || ARGV.extract('-b') || 'gh-pages'
+prefix = ARGV.extract('--prefix') || ARGV.extract('-p') || ''
+input  = ARGV.extract('--input') || ARGV.extract('-i') || '.'
+repo   = ARGV.shift
+
+if repo =~ /^([A-Za-z0-9\-_]+)\/([A-Za-z0-9\-_]+)$/
+  repo = "git@github.com:#{repo}.git"
+end
+
+unless repo
+  tip \
+  %{Usage: git update-ghpages username/repository [options]
+    
+    Options:
+      -p, --prefix      The prefix
+      -i, --input       Input (defaults to current directory)
+      -b, --branch      The branch to deploy to (defaults to gh-pages)
+
+    Examples:
+
+    Update the repo 'coffee' of github user 'james' with the files from the
+    current directory. The files will be in http://james.github.com/coffee.
+      
+      $ git update-ghpages james/coffee
+
+    Same as above, but take the files from 'doc/'.
+
+      $ git update-ghpages james/coffee -i doc
+
+    Same as the first, but the files will instead be in
+    http://james.github.com/coffee/manual.
+
+      $ git update-ghpages james/coffee -i doc -p manual
+  }.gsub(/^ {4}/, '')
+    
+
+  exit 1
+end
+
+puts "Deploying to #{repo} (branch #{branch})."
+
+gitdeploy input, repo, branch, prefix
