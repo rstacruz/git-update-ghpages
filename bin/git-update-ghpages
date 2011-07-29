@@ -64,11 +64,13 @@ def gitdeploy(path, repo, branch, prefix='')
   end
 
   FileUtils.rm_rf temppath
+  true
 end
 
 def tip(msg)
   $stderr.write "#{msg}\n"
 end
+
 # ============================================================================
 
 
@@ -78,8 +80,11 @@ branch = ARGV.extract('--branch') || ARGV.extract('-b') || 'gh-pages'
 prefix = ARGV.extract('--prefix') || ARGV.extract('-p') || ''
 input  = ARGV.extract('--input') || ARGV.extract('-i') || '.'
 repo   = ARGV.shift
+url    = nil
 
-if repo =~ /^([A-Za-z0-9\-_]+)\/([A-Za-z0-9\-_]+)$/
+if repo =~ /^([A-Za-z0-9\-_]+)\/([A-Za-z0-9\-_\.]+)$/
+  user, repo_name = repo.split('/')
+  url = File.join("http://#{user}.github.com/#{repo_name}", prefix)
   repo = "git@github.com:#{repo}.git"
 end
 
@@ -110,9 +115,17 @@ unless repo
   }.gsub(/^ {4}/, '')
     
 
-  exit 1
+  exit 128
 end
 
 puts "Deploying to #{repo} (branch #{branch})."
 
-gitdeploy input, repo, branch, prefix
+result = gitdeploy input, repo, branch, prefix
+
+if result
+  puts ""
+  puts "Done."
+  puts "See: #{url}" if url
+else
+  exit 1
+end
