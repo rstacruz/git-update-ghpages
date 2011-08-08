@@ -86,10 +86,10 @@ if repo =~ /^([A-Za-z0-9\-_]+)\/([A-Za-z0-9\-_\.]+)$/
   user, repo_name = repo.split('/')
 
   if repo_name =~ /\.github\.com/
-    url = ["http://#{user}.github.com", repo_name, prefix].join('/')
+    url = ["http://#{repo_name}", prefix].join('/')
     branch ||= 'master'
   else
-    url = ["http://#{user}.github.com", prefix].join('/')
+    url = ["http://#{user}.github.com", repo_name, prefix].join('/')
     branch ||= 'gh-pages'
   end
 
