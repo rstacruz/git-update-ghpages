@@ -73,10 +73,9 @@ end
 
 # ============================================================================
 
-
 ARGV.extend Params
 
-branch = ARGV.extract('--branch') || ARGV.extract('-b') || 'gh-pages'
+branch = ARGV.extract('--branch') || ARGV.extract('-b') || nil
 prefix = ARGV.extract('--prefix') || ARGV.extract('-p') || ''
 input  = ARGV.extract('--input') || ARGV.extract('-i') || '.'
 msg    = ARGV.extract('--message') || ARGV.extract('-m') || 'Update'
@@ -85,7 +84,15 @@ url    = nil
 
 if repo =~ /^([A-Za-z0-9\-_]+)\/([A-Za-z0-9\-_\.]+)$/
   user, repo_name = repo.split('/')
-  url = File.join("http://#{user}.github.com/#{repo_name}", prefix)
+
+  if repo_name =~ /\.github\.com/
+    url = ["http://#{user}.github.com", repo_name, prefix].join('/')
+    branch ||= 'master'
+  else
+    url = ["http://#{user}.github.com", prefix].join('/')
+    branch ||= 'gh-pages'
+  end
+
   repo = "git@github.com:#{repo}.git"
 end
 
