@@ -27,7 +27,7 @@ def copy_files(from, to, options={})
 end
 
 # Deploy to {repo}/{branch} the files from {path} with the prefix {prefix}
-def gitdeploy(path, repo, branch, prefix='')
+def gitdeploy(path, repo, branch, prefix, message)
   temppath = File.join(Dir.tmpdir, "g-#{Time.now.to_i}")
   FileUtils.rm_rf temppath
 
@@ -45,7 +45,7 @@ def gitdeploy(path, repo, branch, prefix='')
 
     #system "(git add .; git add -u; git commit -m .) > /dev/null"
     Dir.chdir(temppath) {
-      system "(git add .; git add -u; git commit -m .)"
+      system "(git add .; git add -u; git commit -m #{message.to_s.inspect})"
       system "git push origin #{branch}"
     }
   else
@@ -58,7 +58,7 @@ def gitdeploy(path, repo, branch, prefix='')
     copy_files path, File.join(temppath, prefix)
 
     Dir.chdir(temppath) {
-      system "(git init . && git add . && git commit -m .) > /dev/null"
+      system "(git init . && git add . && git commit -m #{message.to_s.inspect}) > /dev/null"
       system "git push #{repo} master:#{branch} --force"
     }
   end
@@ -79,6 +79,7 @@ ARGV.extend Params
 branch = ARGV.extract('--branch') || ARGV.extract('-b') || 'gh-pages'
 prefix = ARGV.extract('--prefix') || ARGV.extract('-p') || ''
 input  = ARGV.extract('--input') || ARGV.extract('-i') || '.'
+msg    = ARGV.extract('--message') || ARGV.extract('-m') || 'Update'
 repo   = ARGV.shift
 url    = nil
 
@@ -96,6 +97,7 @@ unless repo
       -p, --prefix      The prefix
       -i, --input       Input (defaults to current directory)
       -b, --branch      The branch to deploy to (defaults to gh-pages)
+      -m, --message     Commit message (defaults to 'Update')
 
     Examples:
 
@@ -120,7 +122,7 @@ end
 
 puts "Deploying to #{repo} (branch #{branch})."
 
-result = gitdeploy input, repo, branch, prefix
+result = gitdeploy input, repo, branch, prefix, message
 
 if result
   puts ""
