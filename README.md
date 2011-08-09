@@ -11,6 +11,7 @@ Copy the `git-update-ghpages` file to somewhere in your path.
     -p, --prefix      The prefix
     -i, --input       Input (defaults to current directory)
     -b, --branch      The branch to deploy to (defaults to gh-pages)
+    -m, --message     The commit message
 
 ## Examples
 
@@ -32,3 +33,7 @@ Update http://james.github.com itself. GitHub says the branch for
 these should be `master` instead of `gh-pages`.
 
     $ git update-ghpages james/james.github.com -b master
+
+Use a specific commit message
+
+    $ git update-ghpages james/greentea -m "Update documentation"
