@@ -15,13 +15,16 @@ end
 def copy_files(from, to, options={})
   exceptions = options[:except] || []
 
+  puts "Copying files #{from} => #{to}..."  if ENV['VERBOSE']
+
   Dir["#{from}/**/*"].each do |f|
     next  unless File.file?(f)
     next  if exceptions.include?(File.basename(f))
 
-    target = File.join(to, f.gsub(from, ''))
+    target = File.join(to, f.gsub(/^#{Regexp.escape from}/, ''))
 
     FileUtils.mkdir_p File.dirname(target)
+    puts "%20s => %-20s" % [f, target]  if ENV['VERBOSE']
     FileUtils.cp f, target
   end
 end
@@ -63,7 +66,7 @@ def gitdeploy(path, repo, branch, prefix, message)
     }
   end
 
-  FileUtils.rm_rf temppath
+  FileUtils.rm_rf temppath  unless ENV['DEBUG']
   true
 end
 
