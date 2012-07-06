@@ -140,15 +140,16 @@ class CLI
     tip \
     %{Usage: git update-ghpages username/repository [options]
 
-      Options:
-        -p, --prefix      The prefix
-        -i, --input       Input (defaults to current directory)
-        -b, --branch      The branch to deploy to (defaults to gh-pages)
-        -m, --message     Commit message (defaults to 'Update')
+      Flags:
+        -f,        --force       Force an update (WARNING: kills the history!)
+        -s,        --simulate    Creates the repository, but doesn't push.
+        -v,        --verbose     Verbose mode
 
-        -f, --force       Force an update (WARNING: kills the history!)
-        -s, --simulate    Creates the repository, but doesn't push.
-        -v, --verbose     Verbose mode
+      Options:
+        -p PATH,   --prefix      The prefix
+        -i PATH,   --input       Input (defaults to current directory)
+        -b BRANCH, --branch      The branch to deploy to (defaults to gh-pages)
+        -m MSG,    --message     Commit message (defaults to 'Update')
 
       Examples:
 
