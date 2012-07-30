@@ -44,12 +44,16 @@ class CLI
     @repo, @url, @branch = get_github_info(ARGV.shift, branch)
   end
 
+  def git_current_branch
+    `git rev-parse --abbrev-ref HEAD`.strip
+  end
+
   def git_deploy
     in_temp_path do |temppath|
       status "Cloning repository"
       system! "git clone #{repo} -b #{branch} #{temppath}"
 
-      if current_branch != branch
+      if git_current_branch != branch
         status "Warning: No #{branch} branch found in repo, creating one."
         return gitdeploy_force
       end
