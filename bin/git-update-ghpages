@@ -55,7 +55,7 @@ class CLI
 
       if git_current_branch != branch
         status "Warning: No #{branch} branch found in repo, creating one."
-        return gitdeploy_force
+        return git_deploy_force
       end
 
       copy_files input, File.join(temppath, prefix)
@@ -90,7 +90,7 @@ class CLI
     end
   end
 
-  def get_github_info(repo, branch=nil, prefix)
+  def get_github_info(repo, branch=nil, prefix=nil)
     if github_format?(repo)
       user, repo_name = repo.split('/')
       r = "git@github.com:#{repo}.git"
