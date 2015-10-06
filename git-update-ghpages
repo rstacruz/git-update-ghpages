@@ -25,7 +25,7 @@ run() {
     _ git checkout -b "$branch"
     copy_contents "$source"
     _ git add -A .
-    _ git commit -m "$message"
+    git_commit
     git_push --force
   else
     _ git clone "$repo" "$tmpdir" -b "$branch" || (git init && git checkout -b "$branch")
@@ -33,11 +33,19 @@ run() {
     _ rm -rf ./*
     copy_contents "$source"
     _ git add -A .
-    _ git commit -m "$message" || true
+    git_commit || true
     git_push
   fi
   _ rm -rf "$tmpdir"
   status_ "Done"
+}
+
+git_commit() {
+  if [ -z "$author" ]; then
+    _ git commit -m "$message"
+  else
+    _ git commit -m "$message" --author "$author"
+  fi
 }
 
 git_push() {
@@ -77,6 +85,7 @@ help() {
   echo '  -h, --help       show help screen'
   echo '  -f, --force      force push'
   echo '  -n, --dry-run    run in simulation mode'
+  echo '  -a, --author     set the author'
   echo ''
   echo 'Env var options:'
   echo '  GITHUB_TOKEN     if set, use this to push to the repo'
@@ -96,6 +105,7 @@ repospec=
 source=
 branch="gh-pages"
 message="Update"
+author=""
 
 #
 # Parse args
@@ -108,6 +118,10 @@ while [[ "$1" =~ ^- && ! "$1" == '--' ]]; do case $1 in
     ;;
   -n | --dry-run )
     dryrun=1
+    ;;
+  -a | --author)
+    shift
+    author="$1"
     ;;
   -f | --force )
     force=1

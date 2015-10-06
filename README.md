@@ -3,8 +3,10 @@
 Uploads a directory to gh-pages. Perfect for use with Travis-CI deployments.
 
 ```
-$ git-update-ghpages rstacruz/myproject _docs
+git-update-ghpages rstacruz/myproject _docs
+```
 
+```
 ==> cd /var/folders/7d/tmp.9dgEYWLD
 ==> git init
 Initialized empty repository in /var/folders/7d/tmp.9dgEYWLD
@@ -48,5 +50,5 @@ script:
 - npm test     # ...or whatever your test command is
 - make build   # ...or whatever your build command is
 - npm install rstacruz/git-update-ghpages
-- ./node_modules/.bin/git-update-ghpages user/repo _docs
+- ./node_modules/.bin/git-update-ghpages --author="Travis CI <nobody@nobody.org>" user/repo _docs
 ```
