@@ -28,6 +28,8 @@ x contributing.html
 ==> Done.
 ```
 
+[![Status](https://travis-ci.org/rstacruz/git-update-ghpages.svg?branch=master)](https://travis-ci.org/rstacruz/git-update-ghpages "See test builds")
+
 ## Automated Travis deployment
 
 You can use Travis to automatically deploy your static website to GitHub pages.
