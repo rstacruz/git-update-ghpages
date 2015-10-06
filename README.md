@@ -50,9 +50,9 @@ Add this to your `.travis.yml` manifest. This will make a build happen after you
 ```yaml
 script:
 - npm test     # ...or whatever your test command is
+- make build   # ...or whatever your build command is
 - git config --global user.email "nobody@nobody.org"
 - git config --global user.name "Travis CI"
-- if [[ "$TRAVIS_BRANCH" == "master" ]]; then make build; fi  # ...or whatever your build command is
 - if [[ "$TRAVIS_BRANCH" == "master" ]]; then npm install git-update-ghpages; fi
 - if [[ "$TRAVIS_BRANCH" == "master" ]]; then ./node_modules/.bin/git-update-ghpages rstacruz/onmount _docs; fi
 ```
