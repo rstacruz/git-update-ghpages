@@ -52,6 +52,7 @@ script:
 - npm test     # ...or whatever your test command is
 - git config --global user.email "nobody@nobody.org"
 - git config --global user.name "Travis CI"
-- if [ "$TRAVIS_BRANCH" == "master" ]; then make build; fi  # ...or whatever your build command is
-- if [ "$TRAVIS_BRANCH" == "master" ]; then npm install git-update-ghpages; ./node_modules/.bin/git-update-ghpages rstacruz/onmount _docpress; fi
+- if [[ "$TRAVIS_BRANCH" == "master" ]]; then make build; fi  # ...or whatever your build command is
+- if [[ "$TRAVIS_BRANCH" == "master" ]]; then npm install git-update-ghpages; fi
+- if [[ "$TRAVIS_BRANCH" == "master" ]]; then ./node_modules/.bin/git-update-ghpages rstacruz/onmount _docs; fi
 ```
