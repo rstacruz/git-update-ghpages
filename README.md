@@ -49,6 +49,6 @@ Add this to your `.travis.yml` manifest. This will make a build happen after you
 script:
 - npm test     # ...or whatever your test command is
 - make build   # ...or whatever your build command is
-- npm install rstacruz/git-update-ghpages
+- npm install git-update-ghpages
 - ./node_modules/.bin/git-update-ghpages --author="Travis CI <nobody@nobody.org>" user/repo _docs
 ```
