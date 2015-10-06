@@ -24,6 +24,6 @@
     "url": "git+https://github.com/rstacruz/git-update-ghpages.git"
   },
   "scripts": {
-    "test": "./git-update-ghpages -n user/repo ."
+    "test": "make test"
   }
 }
