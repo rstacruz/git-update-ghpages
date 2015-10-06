@@ -1,14 +1,29 @@
 {
   "name": "git-update-ghpages",
+  "description": "Update GitHub pages from the command line",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "author": "Rico Sta. Cruz <rico@ricostacruz.com>",
   "bin": {
     "git-update-ghpages": "git-update-ghpages"
   },
-  "author": "Rico Sta. Cruz <rico@ricostacruz.com>",
-  "license": "MIT"
+  "bugs": {
+    "url": "https://github.com/rstacruz/git-update-ghpages/issues"
+  },
+  "homepage": "https://github.com/rstacruz/git-update-ghpages#readme",
+  "keywords": [
+    "deploy",
+    "git",
+    "github",
+    "github pages",
+    "pages"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rstacruz/git-update-ghpages.git"
+  },
+  "scripts": {
+    "test": "./git-update-ghpages -n user/repo ."
+  }
 }
