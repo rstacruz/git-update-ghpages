@@ -28,7 +28,7 @@ x contributing.html
 ==> Done.
 ```
 
-[![Status](https://travis-ci.org/rstacruz/git-update-ghpages.svg?branch=master)](https://travis-ci.org/rstacruz/git-update-ghpages "See test builds")
+[![Status](https://travis-ci.org/user/repo.svg?branch=master)](https://travis-ci.org/user/repo "See test builds")
 
 ## Automated Travis deployment
 
@@ -51,6 +51,8 @@ Add this to your `.travis.yml` manifest. This will make a build happen after you
 script:
 - npm test     # ...or whatever your test command is
 - make build   # ...or whatever your build command is
+- git config --global user.email "nobody@nobody.org"
+- git config --global user.name "Travis CI"
 - npm install git-update-ghpages
-- ./node_modules/.bin/git-update-ghpages --author="Travis CI <nobody@nobody.org>" user/repo _docs
+- ./node_modules/.bin/git-update-ghpages user/repo _docs
 ```
