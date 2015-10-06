@@ -1,0 +1,126 @@
+#!/usr/bin/env bash
+set -o errexit
+
+copy_contents() {
+  local source="$1"
+  status "Copying contents from $source"
+  if [[ ! "$dryrun" == "1" ]]; then
+    (cd "$source" >/dev/null && tar c .) | tar xv
+  else
+    _ "(cd \"$source\" >/dev/null && tar c .) | tar xv"
+  fi
+}
+
+run() {
+  if [ ! -d "$source" ]; then
+    echo "Source is not a directory: $source"
+    exit 1
+  fi
+
+  local tmpdir="$(mktemp -d)"
+
+  if [[ "$force" == "1" ]]; then
+    _ cd "$tmpdir"
+    _ git init
+    _ git checkout -b "$branch"
+    copy_contents "$source"
+    _ git add -A .
+    _ git commit -m "$message"
+    git_push --force
+  else
+    _ git clone "$repo" "$tmpdir" -b "$branch" || (git init && git checkout -b "$branch")
+    _ cd "$tmpdir"
+    _ rm -rf ./*
+    copy_contents "$source"
+    _ git add -A .
+    _ git commit -m "$message" || true
+    git_push
+  fi
+  status_ "Done"
+}
+
+git_push() {
+  if [ -z "$GITHUB_TOKEN" ]; then
+    _ git push "${repo}" "$branch" "$@"
+  else
+    status "Pushing via \$GITHUB_TOKEN $@"
+    _ git push "https://${GITHUB_TOKEN}@github.com/${repospec}.git" "$branch" "$@" \
+      --quiet >/dev/null 2>&1 || \
+      ( status_ "Failed to push"; exit 1 )
+  fi
+}
+
+status() {
+  echo -e "\n\033[34m==>\033[0;1m" "$@\033[0m"
+}
+status_() {
+  echo -e "\033[33;1m==>\033[0m" "$@"
+}
+
+_() {
+  echo ""
+  status_ "$@"
+  if [[ ! "$dryrun" == "1" ]]; then "$@"; fi
+}
+
+help() {
+  local cmd="$(basename $0)"
+  echo 'Usage:'
+  echo "  $cmd <REPO> <SOURCE>"
+  echo ''
+  echo 'Parameters:'
+  echo "  REPO             repository to push to in 'user/repo' form"
+  echo "  SOURCE           path to upload to repository's gh-pages branch"
+  echo ''
+  echo 'Options:'
+  echo '  -h, --help       show help screen'
+  echo '  -f, --force      force push'
+  echo '  -n, --dry-run    run in simulation mode'
+  echo ''
+  echo 'Env var options:'
+  echo '  GITHUB_TOKEN     if set, use this to push to the repo'
+  echo ''
+  echo 'Example:'
+  echo "  $cmd rstacruz/myproject doc"
+  echo "  # pushes './doc' into the gh-pages branch of rstacruz/myproject"
+}
+
+#
+# Defaults
+#
+
+force=0
+dryrun=0
+repospec=
+source=
+branch="gh-pages"
+message="Update"
+
+#
+# Parse args
+#
+
+while [[ "$1" =~ ^- && ! "$1" == '--' ]]; do case $1 in
+  -h | --help )
+    help
+    exit
+    ;;
+  -n | --dry-run )
+    dryrun=1
+    ;;
+  -f | --force )
+    force=1
+    ;;
+esac; shift; done
+if [[ "$1" == '--' ]]; then shift; fi
+
+if [ -z "$2" ]; then
+  help
+  exit 1
+fi
+
+repospec="$1"
+source="`pwd -LP`/$2"
+repo="https://github.com/${repospec}.git"
+
+run
