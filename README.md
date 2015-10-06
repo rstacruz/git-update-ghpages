@@ -25,3 +25,28 @@ x contributing.html
 ==> rm -rf /var/folders/7d/tmp.9dgEYWLD
 ==> Done.
 ```
+
+## Automated Travis deployment
+
+You can use Travis to automatically deploy your static website to GitHub pages.
+
+### Adding your token
+
+Make sure Travis is already enabled on your repository. Generate a [GitHub token](https://github.com/settings/tokens/new) and add it to your repo.
+
+```sh
+# gem install travis
+travis encrypt GITHUB_TOKEN=... --add
+```
+
+### Configuring builds
+
+Add this to your `.travis.yml` manifest. This will make a build happen after your test, then a deployment right after that. In this example, we're deploying `_docs` to `user/repo`.
+
+```yaml
+script:
+- npm test     # ...or whatever your test command is
+- make build   # ...or whatever your build command is
+- npm install rstacruz/git-update-ghpages
+- ./node_modules/.bin/git-update-ghpages user/repo _docs
+```
