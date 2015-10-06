@@ -22,5 +22,6 @@ x contributing.html
   16 files changed, 16085 insertions(+)
 
 ==> git push https://github.com/rstacruz/myproject.git gh-pages
+==> rm -rf /var/folders/7d/tmp.9dgEYWLD
 ==> Done.
 ```

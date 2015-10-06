@@ -36,6 +36,7 @@ run() {
     _ git commit -m "$message" || true
     git_push
   fi
+  _ rm -rf "$tmpdir"
   status_ "Done"
 }
 
