@@ -28,8 +28,10 @@ run() {
     git_commit
     git_push --force
   else
-    _ git clone "$repo" "$tmpdir" -b "$branch" || (git init && git checkout -b "$branch")
     _ cd "$tmpdir"
+    _ git clone "$repo" . -b "$branch" || ( \
+      _ git init && \
+      _ git checkout -b "$branch")
     _ rm -rf ./*
     copy_contents "$source"
     _ git add -A .
