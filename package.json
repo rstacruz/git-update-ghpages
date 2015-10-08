@@ -1,7 +1,7 @@
 {
   "name": "git-update-ghpages",
   "description": "Update GitHub pages from the command line",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Rico Sta. Cruz <rico@ricostacruz.com>",
   "bin": {
     "git-update-ghpages": "git-update-ghpages"
