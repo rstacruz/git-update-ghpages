@@ -51,11 +51,11 @@ Add this to your `.travis.yml` manifest. This will make a build happen after you
 # .travis.yml
 env:
   global:
-    GIT_NAME: Travis CI
-    GIT_EMAIL: nobody@nobody.org
-    GITHUB_REPO: rstacruz/myproject
-    GIT_SOURCE: docs
-    secure: ... # added by 'travis encrypt'
+    - GIT_NAME: Travis CI
+    - GIT_EMAIL: nobody@nobody.org
+    - GITHUB_REPO: rstacruz/myproject
+    - GIT_SOURCE: docs
+    - secure: ... # added by 'travis encrypt'
 
 script:
 - npm test     # ...or whatever your test command is
