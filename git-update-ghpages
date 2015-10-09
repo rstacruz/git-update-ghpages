@@ -94,12 +94,16 @@ help() {
   echo '  -h, --help       show help screen'
   echo '  -f, --force      force push'
   echo '  -n, --dry-run    run in simulation mode'
+  echo '  -e, --use-env    pick up arguments from environment variables'
   echo '  -a, --author     set the author'
   echo ''
   echo 'Env var options:'
   echo '  GITHUB_TOKEN     if set, use this to push to the repo'
-  echo "  GIT_NAME         if set, set this as the repo's user.name"
-  echo "  GIT_EMAIL        if set, set this as the repo's user.email"
+  echo ''
+  echo 'Optional env vars:'
+  echo "Run with '-e' to enable the use of these variables."
+  echo "  GIT_NAME         set this as the repos user.name"
+  echo '  GIT_EMAIL        set this as the repos user.email'
   echo ''
   echo 'Example:'
   echo "  $cmd rstacruz/myproject doc"
@@ -116,6 +120,7 @@ repospec=
 source=
 branch="gh-pages"
 message="Update"
+useenv=0
 author=""
 
 #
@@ -129,6 +134,9 @@ while [[ "$1" =~ ^- && ! "$1" == '--' ]]; do case $1 in
     ;;
   -n | --dry-run )
     dryrun=1
+    ;;
+  -e | --use-env )
+    useenv=1
     ;;
   -a | --author)
     shift
@@ -149,5 +157,5 @@ repospec="$1"
 source="`pwd -LP`/$2"
 repo="https://github.com/${repospec}.git"
 
-set_config
+if [[ "$useenv" == "1" ]]; then set_config; fi
 run

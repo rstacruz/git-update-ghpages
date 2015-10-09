@@ -26,7 +26,7 @@ test-author:
 	rm .output
 
 test-nameemail:
-	env GIT_NAME='Xxx' GIT_EMAIL='Yyy' ./git-update-ghpages -n user/repo . > .output
+	env GIT_NAME='Xxx' GIT_EMAIL='Yyy' ./git-update-ghpages -e -n user/repo . > .output
 	grep "config user.name Xxx" .output >/dev/null
 	grep "config user.email Yyy" .output >/dev/null
 	rm .output
