@@ -1,7 +1,8 @@
 test: \
 	test-basic \
 	test-force \
-	test-author
+	test-author \
+	test-nameemail
 
 test-basic:
 	./git-update-ghpages -n user/repo . > .output
@@ -23,3 +24,11 @@ test-author:
 	./git-update-ghpages -n -a "Xyzxyz" user/repo . > .output
 	grep "author Xyzxyz" .output >/dev/null
 	rm .output
+
+test-nameemail:
+	env GIT_NAME='Xxx' GIT_EMAIL='Yyy' ./git-update-ghpages -n user/repo . > .output
+	grep "config user.name Xxx" .output >/dev/null
+	grep "config user.email Yyy" .output >/dev/null
+	rm .output
+
+

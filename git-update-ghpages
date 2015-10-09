@@ -11,6 +11,13 @@ copy_contents() {
   fi
 }
 
+# Sets git config
+set_config() {
+  if [ -n "$GIT_NAME" ]; then _ git config user.name "$GIT_NAME"; fi
+  if [ -n "$GIT_EMAIL" ]; then _ git config user.email "$GIT_EMAIL"; fi
+}
+
+# Runs the deployment
 run() {
   if [ ! -d "$source" ]; then
     echo "Source is not a directory: $source"
@@ -91,6 +98,8 @@ help() {
   echo ''
   echo 'Env var options:'
   echo '  GITHUB_TOKEN     if set, use this to push to the repo'
+  echo "  GIT_NAME         if set, set this as the repo's user.name"
+  echo "  GIT_EMAIL        if set, set this as the repo's user.email"
   echo ''
   echo 'Example:'
   echo "  $cmd rstacruz/myproject doc"
@@ -140,4 +149,5 @@ repospec="$1"
 source="`pwd -LP`/$2"
 repo="https://github.com/${repospec}.git"
 
+set_config
 run
