@@ -170,7 +170,7 @@ if [ -z "$source" ]; then
   exit 1
 fi
 
-source="`pwd -LP`/$2"
+source="`pwd -LP`/$source"
 repo="https://github.com/${repospec}.git"
 
 run
