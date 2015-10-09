@@ -31,6 +31,7 @@ run() {
     _ git init
     _ git checkout -b "$branch"
     copy_contents "$source"
+    if [[ "$useenv" == "1" ]]; then set_config; fi
     _ git add -A .
     git_commit
     git_push --force
@@ -41,6 +42,7 @@ run() {
       _ git checkout -b "$branch")
     _ rm -rf ./*
     copy_contents "$source"
+    if [[ "$useenv" == "1" ]]; then set_config; fi
     _ git add -A .
     git_commit || true
     git_push
@@ -101,13 +103,20 @@ help() {
   echo '  GITHUB_TOKEN     if set, use this to push to the repo'
   echo ''
   echo 'Optional env vars:'
-  echo "Run with '-e' to enable the use of these variables."
+  echo "  Run with '-e' to enable the use of these variables."
   echo "  GIT_NAME         set this as the repos user.name"
   echo '  GIT_EMAIL        set this as the repos user.email'
+  echo '  GITHUB_REPO      substitute as the REPO (1st argument)'
+  echo '  GIT_SOURCE       substitute as the SOURCE (2nd argument)'
   echo ''
   echo 'Example:'
   echo "  $cmd rstacruz/myproject doc"
-  echo "  # pushes './doc' into the gh-pages branch of rstacruz/myproject"
+  echo "    # pushes './doc' into the gh-pages branch of rstacruz/myproject"
+  echo ''
+  echo "  export GITHUB_REPO='xyz/abc'"
+  echo "  export GIT_SOURCE='docs'"
+  echo "  $cmd -e"
+  echo "    # pushes './doc' into the gh-pages branch of xyz/abc"
 }
 
 #
@@ -148,14 +157,20 @@ while [[ "$1" =~ ^- && ! "$1" == '--' ]]; do case $1 in
 esac; shift; done
 if [[ "$1" == '--' ]]; then shift; fi
 
-if [ -z "$2" ]; then
+if [[ "$useenv" == "1" ]] && [[ -n "$GITHUB_REPO" ]] && [[ -n "$GIT_SOURCE" ]] && [[ -z "$2" ]]; then
+  repospec="$GITHUB_REPO"
+  source="$GIT_SOURCE"
+else
+  repospec="$1"
+  source="$2"
+fi
+
+if [ -z "$source" ]; then
   help
   exit 1
 fi
 
-repospec="$1"
 source="`pwd -LP`/$2"
 repo="https://github.com/${repospec}.git"
 
-if [[ "$useenv" == "1" ]]; then set_config; fi
 run
