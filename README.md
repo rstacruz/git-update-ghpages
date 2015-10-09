@@ -60,7 +60,7 @@ env:
 script:
 - npm test     # ...or whatever your test command is
 - make build   # ...or whatever your build command is
-- if [[ "$TRAVIS_BRANCH" == "master" ]]; then npm install git-update-ghpages && ./node_modules/.bin/git-update-ghpages -e; fi
+- if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then npm install git-update-ghpages && ./node_modules/.bin/git-update-ghpages -e; fi
 ```
 
 #### For Node.js projects
@@ -73,5 +73,5 @@ npm install --save-dev --save-exact git-update-ghpages
 
 ```yaml
 # .travis.yml
-- if [[ "$TRAVIS_BRANCH" == "master" ]]; then ./node_modules/.bin/git-update-ghpages -e; fi
+- if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then ./node_modules/.bin/git-update-ghpages -e; fi
 ```
