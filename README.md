@@ -34,7 +34,7 @@ x contributing.html
 
 You can use Travis to automatically deploy your static website to GitHub pages.
 
-### Adding your token
+#### Adding your token
 
 Make sure Travis is already enabled on your repository. Generate a [GitHub token](https://github.com/settings/tokens/new) and add it to your repo.
 
@@ -43,16 +43,35 @@ Make sure Travis is already enabled on your repository. Generate a [GitHub token
 travis encrypt GITHUB_TOKEN=... --add
 ```
 
-### Configuring builds
+#### Configuring builds
 
 Add this to your `.travis.yml` manifest. This will make a build happen after your test, then a deployment right after that. In this example, we're deploying `_docs` to `user/repo`.
 
 ```yaml
+# .travis.yml
+env:
+  global:
+    GIT_NAME: Travis CI
+    GIT_EMAIL: nobody@nobody.org
+    GITHUB_REPO: rstacruz/myproject
+    GIT_SOURCE: docs
+    secure: ... # added by 'travis encrypt'
+
 script:
 - npm test     # ...or whatever your test command is
 - make build   # ...or whatever your build command is
-- git config --global user.email "nobody@nobody.org"
-- git config --global user.name "Travis CI"
-- if [[ "$TRAVIS_BRANCH" == "master" ]]; then npm install git-update-ghpages; fi
-- if [[ "$TRAVIS_BRANCH" == "master" ]]; then ./node_modules/.bin/git-update-ghpages rstacruz/onmount _docs; fi
+- if [[ "$TRAVIS_BRANCH" == "master" ]]; then npm install git-update-ghpages && ./node_modules/.bin/git-update-ghpages -e; fi
+```
+
+#### For Node.js projects
+
+If your project is a Node.js project, you can simplify this by adding `git-update-ghpages` to your *devDependencies*.
+
+```sh
+npm install --save-dev --save-exact git-update-ghpages
+```
+
+```yaml
+# .travis.yml
+- if [[ "$TRAVIS_BRANCH" == "master" ]]; then ./node_modules/.bin/git-update-ghpages -e; fi
 ```
