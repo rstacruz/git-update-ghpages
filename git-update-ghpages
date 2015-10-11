@@ -97,6 +97,7 @@ help() {
   echo '  -f, --force      force push'
   echo '  -n, --dry-run    run in simulation mode'
   echo '  -e, --use-env    pick up arguments from environment variables'
+  echo '  -b, --branch     use this branch name (default: gh-pages)'
   echo '  -a, --author     set the author'
   echo ''
   echo 'Env var options:'
@@ -108,6 +109,7 @@ help() {
   echo '  GIT_EMAIL        set this as the repos user.email'
   echo '  GITHUB_REPO      substitute as the REPO (1st argument)'
   echo '  GIT_SOURCE       substitute as the SOURCE (2nd argument)'
+  echo '  GIT_BRANCH       use this branch name (--branch)'
   echo ''
   echo 'Example:'
   echo "  $cmd rstacruz/myproject doc"
@@ -127,7 +129,7 @@ force=0
 dryrun=0
 repospec=
 source=
-branch="gh-pages"
+branch=
 message="Update"
 useenv=0
 author=""
@@ -140,6 +142,10 @@ while [[ "$1" =~ ^- && ! "$1" == '--' ]]; do case $1 in
   -h | --help )
     help
     exit
+    ;;
+  -b | --branch )
+    shift
+    branch="$1"
     ;;
   -n | --dry-run )
     dryrun=1
@@ -157,6 +163,10 @@ while [[ "$1" =~ ^- && ! "$1" == '--' ]]; do case $1 in
 esac; shift; done
 if [[ "$1" == '--' ]]; then shift; fi
 
+if [[ "$useenv" == "1" ]] && [[ -n "$GIT_BRANCH" ]] && [[ -z "$branch" ]]; then
+  branch="$GIT_BRANCH"
+fi
+
 if [[ "$useenv" == "1" ]] && [[ -n "$GITHUB_REPO" ]] && [[ -n "$GIT_SOURCE" ]] && [[ -z "$2" ]]; then
   repospec="$GITHUB_REPO"
   source="$GIT_SOURCE"
@@ -164,6 +174,8 @@ else
   repospec="$1"
   source="$2"
 fi
+
+: ${branch:="gh-pages"}
 
 if [ -z "$source" ]; then
   help

@@ -30,17 +30,17 @@ x contributing.html
 
 [![Status](https://travis-ci.org/rstacruz/git-update-ghpages.svg?branch=master)](https://travis-ci.org/rstacruz/git-update-ghpages "See test builds")
 
-## Automated Travis deployment
+## Travis deployment
 
 You can use Travis to automatically deploy your static website to GitHub pages.
 
-#### Generate a GitHub token
+### Generate a GitHub token
 
 Generate a [GitHub token](https://github.com/settings/tokens/new). Travis will use this to push to your repository on your behalf. You can use any name, but you can call it _Travis CI_. Keep this token somewhere safe; you can use it for any of your repositories that will need git-update-ghpages deployments.
 
 > <img src='docs/images/github-token.png' width='400'>
 
-#### Adding your token
+### Adding your token
 
 Make sure Travis is already enabled on your repository. Go to your Travis's repo's settings page (`https://travis-ci.org/user/repo/settings`), and add your token there as `GITHUB_TOKEN`.
  Be sure to turn off the "show this in build log" option.
@@ -53,12 +53,15 @@ Alternatively, you can also use the [Travis CLI tool](http://rubygems.org/gems/t
 travis encrypt GITHUB_TOKEN="your token here" --add
 ```
 
-#### Configuring builds
+### Configuring builds
 
 Add this to your `.travis.yml` manifest. This will make a build happen after your test, then a deployment right after that. uIn this example, we're deploying `_docs` to `user/repo`.
 
 ```yaml
 # .travis.yml
+node_js:
+- '4'
+
 env:
   global:
     - GIT_NAME: Travis CI
@@ -74,7 +77,7 @@ after_success:
 - if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then npm install git-update-ghpages && ./node_modules/.bin/git-update-ghpages -e; fi
 ```
 
-#### For Node.js projects
+### For Node.js projects
 
 If your project is a Node.js project, you can simplify this by adding `git-update-ghpages` to your *devDependencies*.
 

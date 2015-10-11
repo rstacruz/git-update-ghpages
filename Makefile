@@ -3,7 +3,13 @@ test: \
 	test-force \
 	test-author \
 	test-nameemail \
-	test-repo
+	test-repo \
+	test-branch \
+	test-branch-env \
+	ok
+
+ok:
+	@echo "\n\033[32m✓\033[0;1m Tests pass\033[0m"
 
 test-basic:
 	./git-update-ghpages -n user/repo . > .output
@@ -36,4 +42,16 @@ test-nameemail:
 test-repo:
 	env GITHUB_REPO='xyz/abc' GIT_SOURCE='.' ./git-update-ghpages -n -e > .output
 	grep "git push https://github.com/xyz/abc.git" .output >/dev/null
+	rm .output
+
+test-branch:
+	./git-update-ghpages -n -b gh-pages-custom user/repo . > .output
+	grep "git clone https://github.com/user/repo.git . -b gh-pages-custom" .output >/dev/null
+	grep "git push https://github.com/user/repo.git gh-pages-custom" .output >/dev/null
+	rm .output
+
+test-branch-env:
+	env GIT_BRANCH=gh-pages-custom ./git-update-ghpages -e -n user/repo . > .output
+	grep "git clone https://github.com/user/repo.git . -b gh-pages-custom" .output >/dev/null
+	grep "git push https://github.com/user/repo.git gh-pages-custom" .output >/dev/null
 	rm .output
