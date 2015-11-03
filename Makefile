@@ -6,6 +6,7 @@ test: \
 	test-repo \
 	test-branch \
 	test-branch-env \
+	test-keep \
 	ok
 
 ok:
@@ -54,4 +55,9 @@ test-branch-env:
 	env GITHUB_TOKEN='' GIT_BRANCH=gh-pages-custom ./git-update-ghpages -e -n user/repo . > .output
 	grep "git clone https://github.com/user/repo.git . -b gh-pages-custom" .output >/dev/null
 	grep "git push https://github.com/user/repo.git gh-pages-custom" .output >/dev/null
+	rm .output
+
+test-keep:
+	env GITHUB_TOKEN='' ./git-update-ghpages -k -n user/repo . > .output
+	grep -v 'rm -rf' .output >/dev/null
 	rm .output
