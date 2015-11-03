@@ -40,7 +40,7 @@ run() {
     _ git clone "$repo" . -b "$branch" || ( \
       _ git init && \
       _ git checkout -b "$branch")
-    _ rm -rf ./*
+    if [[ "$keep" == "0" ]]; then _ rm -rf ./*
     copy_contents "$source"
     if [[ "$useenv" == "1" ]]; then set_config; fi
     _ git add -A .
@@ -99,6 +99,7 @@ help() {
   echo '  -e, --use-env    pick up arguments from environment variables'
   echo '  -b, --branch     use this branch name (default: gh-pages)'
   echo '  -a, --author     set the author'
+  echo '  -k, --keep       keep existing files in the repo'
   echo ''
   echo 'Env var options:'
   echo '  GITHUB_TOKEN     if set, use this to push to the repo'
@@ -133,6 +134,7 @@ branch=
 message="Update"
 useenv=0
 author=""
+keep=0
 
 #
 # Parse args
@@ -152,6 +154,9 @@ while [[ "$1" =~ ^- && ! "$1" == '--' ]]; do case $1 in
     ;;
   -e | --use-env )
     useenv=1
+    ;;
+  -k | --keep )
+    keep=1
     ;;
   -a | --author)
     shift
