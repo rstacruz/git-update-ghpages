@@ -40,7 +40,7 @@ run() {
     _ git clone "$repo" . -b "$branch" || ( \
       _ git init && \
       _ git checkout -b "$branch")
-    if [[ "$keep" == "0" ]]; then _ rm -rf ./*
+    if [[ "$keep" == "0" ]]; then _ rm -rf ./*; fi
     copy_contents "$source"
     if [[ "$useenv" == "1" ]]; then set_config; fi
     _ git add -A .

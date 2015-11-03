@@ -12,7 +12,7 @@ ok:
 	@echo "\n\033[32m✓\033[0;1m Tests pass\033[0m"
 
 test-basic:
-	./git-update-ghpages -n user/repo . > .output
+	env GITHUB_TOKEN='' ./git-update-ghpages -n user/repo . > .output
 	grep "rm -rf" .output >/dev/null
 	grep ">/dev/null && tar c .) | tar xv" .output >/dev/null
 	grep "git add -A ." .output >/dev/null
@@ -21,7 +21,7 @@ test-basic:
 	rm .output
 
 test-force:
-	./git-update-ghpages -n -f user/repo . > .output
+	env GITHUB_TOKEN='' ./git-update-ghpages -n -f user/repo . > .output
 	grep "rm -rf" .output >/dev/null
 	grep "git add" .output >/dev/null
 	grep "git commit" .output >/dev/null
@@ -29,7 +29,7 @@ test-force:
 	rm .output
 
 test-author:
-	./git-update-ghpages -n -a "Xyzxyz" user/repo . > .output
+	env GITHUB_TOKEN='' ./git-update-ghpages -n -a "Xyzxyz" user/repo . > .output
 	grep "author Xyzxyz" .output >/dev/null
 	rm .output
 
@@ -40,18 +40,18 @@ test-nameemail:
 	rm .output
 
 test-repo:
-	env GITHUB_REPO='xyz/abc' GIT_SOURCE='.' ./git-update-ghpages -n -e > .output
+	env GITHUB_TOKEN='' GITHUB_REPO='xyz/abc' GIT_SOURCE='.' ./git-update-ghpages -n -e > .output
 	grep "git push https://github.com/xyz/abc.git" .output >/dev/null
 	rm .output
 
 test-branch:
-	./git-update-ghpages -n -b gh-pages-custom user/repo . > .output
+	env GITHUB_TOKEN='' ./git-update-ghpages -n -b gh-pages-custom user/repo . > .output
 	grep "git clone https://github.com/user/repo.git . -b gh-pages-custom" .output >/dev/null
 	grep "git push https://github.com/user/repo.git gh-pages-custom" .output >/dev/null
 	rm .output
 
 test-branch-env:
-	env GIT_BRANCH=gh-pages-custom ./git-update-ghpages -e -n user/repo . > .output
+	env GITHUB_TOKEN='' GIT_BRANCH=gh-pages-custom ./git-update-ghpages -e -n user/repo . > .output
 	grep "git clone https://github.com/user/repo.git . -b gh-pages-custom" .output >/dev/null
 	grep "git push https://github.com/user/repo.git gh-pages-custom" .output >/dev/null
 	rm .output
